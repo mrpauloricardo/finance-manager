@@ -9,6 +9,7 @@ import com.projects.personal_finance_api.dto.request.LoginRequest;
 import com.projects.personal_finance_api.dto.request.RegisterRequest;
 import com.projects.personal_finance_api.dto.response.AuthResponse;
 import com.projects.personal_finance_api.dto.response.UserResponse;
+import com.projects.personal_finance_api.entity.Roles;
 import com.projects.personal_finance_api.entity.User;
 import com.projects.personal_finance_api.exception.BadRequestException;
 import com.projects.personal_finance_api.repository.UserRepository;
@@ -49,13 +50,16 @@ public class AuthService {
         // 4. Encode password
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // 5. Set createdAt timestamp
+        // 5. Set 'USER' role
+        user.setRole(Roles.USER);
+
+        // 6. Set createdAt timestamp
         user.setCreatedAt(LocalDateTime.now());
 
-        // 6. Save user to the database
+        // 7. Save user to the database
         User savedUser = userRepository.save(user);
 
-        // 7. Convert User -> UserResponse and returns
+        // 8. Convert User -> UserResponse and returns
         return UserResponse.fromEntity(savedUser);
 
     }
@@ -80,6 +84,13 @@ public class AuthService {
 
         // 5. Mounts and returns AuthResponse [contains JWT token and user data]
         return new AuthResponse(jwt, "Bearer", user.getUsername(), user.getEmail());
+    }
+
+    public UserResponse getCurrentUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        return UserResponse.fromEntity(user);
     }
 
 }

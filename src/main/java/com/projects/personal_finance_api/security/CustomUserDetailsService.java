@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository
-                .findByEmail(username)
+                .findByUsername(username)
                 .orElseThrow(
                         () -> new UsernameNotFoundException("Usuário não encontrado: " + username));
 
@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername()) // ou user.getUsername(), se for o campo principal
                 .password(user.getPassword())
-                .authorities("USER") // ajuste depois conforme roles reais
+                .authorities("ROLE_" + user.getRole().name()) // ajuste depois conforme roles reais
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
