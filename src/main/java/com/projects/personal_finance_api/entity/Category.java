@@ -85,11 +85,10 @@ public class Category {
 
     }
 
-    public Category(String name, CategoryType type, User user, LocalDateTime createdAt) {
+    public Category(String name, CategoryType type, User user) {
         this.name = name;
         this.type = type;
         this.user = user;
-        this.createdAt = createdAt;
     }
 
 }
